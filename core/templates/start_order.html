@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Start Your Order</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body {
+            font-family: "Segoe UI", sans-serif;
+            background: #f3f4f6;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        .form-container {
+            background: white;
+            padding: 30px 40px;
+            border-radius: 12px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.08);
+            width: 100%;
+            max-width: 400px;
+        }
+
+        h2 {
+            text-align: center;
+            margin-bottom: 25px;
+            color: #333;
+        }
+
+        input, textarea {
+            width: 100%;
+            padding: 12px;
+            margin-bottom: 15px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 16px;
+            box-sizing: border-box;
+        }
+
+        button {
+            width: 100%;
+            background-color: #4f46e5;
+            color: white;
+            padding: 12px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background 0.3s ease;
+        }
+
+        button:hover {
+            background-color: #4338ca;
+        }
+
+        @media (max-width: 500px) {
+            .form-container {
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="form-container">
+    <h2>Start Your Order</h2>
+    <form method="POST">
+        {% csrf_token %}
+        <input type="text" name="name" placeholder="Your Name" required>
+        <input type="email" name="email" placeholder="Email" required>
+        <input type="text" name="phone" placeholder="Phone Number" required>
+        <textarea name="address" placeholder="Address" required rows="4"></textarea>
+        <button type="submit">Continue to Meals</button>
+    </form>
+</div>
+
+</body>
+</html>

@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Order Success</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f8f9fa;
+            color: #333;
+            text-align: center;
+            padding: 40px 20px;
+        }
+
+        h1 {
+            color: #28a745;
+            font-size: 2.5rem;
+        }
+
+        .order-details {
+            background-color: #ffffff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            margin-bottom: 30px;
+        }
+
+        .order-details p {
+            font-size: 1.2rem;
+            color: #555;
+        }
+
+        .order-items {
+            text-align: left;
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .order-items h3 {
+            font-size: 1.8rem;
+            color: #007bff;
+            margin-bottom: 15px;
+        }
+
+        .order-items ul {
+            list-style-type: none;
+            padding: 0;
+        }
+
+        .order-items li {
+            font-size: 1rem;
+            margin-bottom: 12px;
+            background-color: #f9f9f9;
+            padding: 12px;
+            border-radius: 8px;
+            border: 1px solid #ddd;
+        }
+
+        .order-items li span {
+            display: block;
+            font-size: 1rem;
+            margin-top: 5px;
+        }
+
+        .back-to-cart {
+            display: inline-block;
+            margin-top: 20px;
+            padding: 12px 25px;
+            background-color: #007bff;
+            color: #fff;
+            font-size: 1.2rem;
+            text-decoration: none;
+            border-radius: 5px;
+            transition: background-color 0.3s ease;
+        }
+
+        .back-to-cart:hover {
+            background-color: #0056b3;
+        }
+
+    </style>
+</head>
+<body>
+    <h1>Order Successful!</h1>
+
+    <div class="order-details">
+        <p><strong>Order ID:</strong> {{ order.order_id }}</p>
+        <p><strong>Order Date:</strong> {{ order.order_date }}</p>
+        <p><strong>Total Price:</strong> ₹{{ order.total_price }}</p>
+    </div>
+
+    <div class="order-items">
+        <h3>Order Items:</h3>
+        <ul>
+            {% for order_meal in order_meals %}
+                <li>
+                    <strong>{{ order_meal.meal.name }}</strong>
+                    <span>Quantity: {{ order_meal.quantity }}</span>
+                    <span>Price: ₹{{ order_meal.meal.available_price }} each</span>
+                </li>
+            {% endfor %}
+        </ul>
+    </div>
+
+    <a href="{% url 'cart' %}" class="back-to-cart">Go back to Cart</a>
+</body>
+</html>

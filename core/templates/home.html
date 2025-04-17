@@ -1,0 +1,73 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>FlexiMeal - Home</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(to right, #f5f7fa, #c3cfe2);
+        }
+
+        .header {
+            background-color: #4a90e2;
+            color: white;
+            padding: 20px;
+            text-align: center;
+            font-size: 2em;
+            border-bottom: 4px solid #3b6db0;
+        }
+
+        .container {
+            display: flex;
+            width: 100%;
+            height: 200px; /* full height minus header */
+        }
+
+        .box {
+            flex: 1;
+            border: 2px solid #ddd;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            transition: transform 0.3s;
+            font-size: 2em;
+            font-weight: bold;
+        }
+
+        .box:hover {
+            transform: scale(1.02);
+        }
+
+        .order-box {
+            background-color: #ffe0b2; /* light orange */
+        }
+
+        .history-box {
+            background-color: #c8e6c9; /* light green */
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        FlexiMeal
+    </div>
+
+    <div class="container">
+        <div class="box order-box" onclick="window.location.href='/start_order/'">
+            Order
+        </div>
+        <div class="box history-box" onclick="window.location.href='/users/'">
+            History
+        </div>
+    </div>
+</body>
+</html>

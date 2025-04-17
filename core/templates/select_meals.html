@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Select Meals</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background-color: #f7f7f7;
+            padding: 20px;
+        }
+
+        h1 {
+            text-align: center;
+            color: #333;
+        }
+
+        .meal-container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 20px;
+        }
+
+        .meal-card {
+            background-color: #fff;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            width: 250px;
+            padding: 15px;
+            text-align: center;
+        }
+
+        .meal-card h3 {
+            color: #444;
+        }
+
+        .meal-card p {
+            color: #666;
+        }
+
+        .add-btn {
+            margin-top: 10px;
+            padding: 8px 16px;
+            background-color: #28a745;
+            border: none;
+            color: white;
+            font-weight: bold;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .add-btn:hover {
+            background-color: #218838;
+        }
+
+        .cart-link {
+            text-align: right;
+            margin-bottom: 20px;
+        }
+
+        .cart-link a {
+            text-decoration: none;
+            background-color: #007bff;
+            padding: 10px 15px;
+            border-radius: 5px;
+            color: white;
+            font-weight: bold;
+        }
+
+        .cart-link a:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+
+<div class="cart-link">
+    <a href="{% url 'cart' %}">🛒 Cart ({{ cart_count }})</a>
+</div>
+
+<h1>Select Your Meals</h1>
+
+<div class="meal-container">
+    {% for meal in meals %}
+        <div class="meal-card">
+            <h3>{{ meal.name }}</h3>
+            <p>Price: ₹{{ meal.available_price }}</p>
+            <p>{{ meal.description }}</p>
+            <form method="POST">
+                {% csrf_token %}
+                <button class="add-btn" type="submit" name="meal_id" value="{{ meal.meal_id }}">Add to Cart</button>
+            </form>
+        </div>
+    {% empty %}
+        <p>No meals available.</p>
+    {% endfor %}
+</div>
+
+</body>
+</html>

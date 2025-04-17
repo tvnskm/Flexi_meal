@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Customize Meal</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f7fa;
+            padding-top: 50px;
+            text-align: center;
+        }
+        .container {
+            background-color: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0px 10px 20px rgba(0, 0, 0, 0.1);
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        h2 {
+            color: #007bff;
+        }
+        .ingredients-list {
+            margin-top: 20px;
+            text-align: left;
+        }
+        .ingredient {
+            margin: 15px 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .ingredient-name {
+            font-weight: bold;
+        }
+        .ingredient-price {
+            color: green;
+        }
+        .ingredient-quantity {
+            width: 50px;
+            padding: 5px;
+            font-size: 14px;
+            text-align: center;
+        }
+        .button {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            font-size: 16px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-top: 20px;
+        }
+        .button:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h2>Customize your Meal: {{ meal.name }}</h2>
+        <form method="POST">
+            {% csrf_token %}
+            <input type="hidden" name="meal_id" value="{{ meal.meal_id }}">
+            
+            <div class="ingredients-list">
+                {% for ingredient in ingredients %}
+                    <div class="ingredient">
+                        <span class="ingredient-name">{{ ingredient.name }}</span>
+                        <span class="ingredient-price">₹{{ ingredient.price|floatformat:2 }}</span>
+                        <input type="number" name="ingredient_{{ ingredient.ingredient_id }}" value="0" class="ingredient-quantity" min="0">
+                    </div>
+                {% endfor %}
+            </div>
+
+            <button type="submit" class="button">Add to Cart</button>
+        </form>
+    </div>
+
+</body>
+</html>

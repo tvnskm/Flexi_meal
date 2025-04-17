@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>All Users</title>
+    <style>
+        /* Global Styles */
+        body {
+            font-family: 'Roboto', sans-serif;
+            background: linear-gradient(135deg, #6e7fd0, #8390fa);
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        .container {
+            background-color: #ffffff;
+            padding: 40px 60px;
+            border-radius: 12px;
+            box-shadow: 0px 15px 40px rgba(0, 0, 0, 0.1);
+            max-width: 900px;
+            width: 100%;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+
+        .container:hover {
+            transform: translateY(-5px);
+            box-shadow: 0px 25px 60px rgba(0, 0, 0, 0.2);
+        }
+
+        h2 {
+            font-size: 36px;
+            color: #4e73df;
+            margin-bottom: 30px;
+            font-weight: 700;
+        }
+
+        .user-list {
+            list-style: none;
+            padding: 0;
+        }
+
+        .user-list li {
+            margin: 20px 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 12px;
+            border-radius: 8px;
+            background-color: #f0f4ff;
+            transition: all 0.3s ease;
+        }
+
+        .user-list li:hover {
+            background-color: #d1e4ff;
+            transform: scale(1.05);
+            box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .user-list a {
+            color: #2e3a8c;
+            text-decoration: none;
+            font-size: 22px;
+            font-weight: 600;
+            transition: color 0.3s ease, transform 0.3s ease;
+        }
+
+        .user-list a:hover {
+            color: #1d2966;
+            transform: translateX(5px);
+        }
+
+        .no-users {
+            font-size: 20px;
+            color: #666;
+            font-style: italic;
+            padding-top: 20px;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .container {
+                padding: 30px 40px;
+            }
+
+            h2 {
+                font-size: 30px;
+            }
+
+            .user-list li {
+                font-size: 18px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .container {
+                padding: 20px 30px;
+            }
+
+            h2 {
+                font-size: 26px;
+            }
+
+            .user-list li {
+                font-size: 16px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h2>All Users</h2>
+        
+        {% if users %}
+            <ul class="user-list">
+                {% for user in users %}
+                    <li>
+                        <a href="{% url 'user_orders' user_id=user.user_id %}">{{ user.name }}</a>
+                    </li>
+                {% endfor %}
+            </ul>
+        {% else %}
+            <p class="no-users">No users found!</p>
+        {% endif %}
+    </div>
+
+</body>
+</html>

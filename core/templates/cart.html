@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Your Cart - FlexiMeal</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background-color: #f3f4f6;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            min-height: 100vh;
+        }
+
+        .container {
+            background: #ffffff;
+            margin-top: 50px;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+            width: 90%;
+            max-width: 600px;
+        }
+
+        h2 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 20px;
+        }
+
+        ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        li {
+            background-color: #f9fafb;
+            border: 1px solid #e5e7eb;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .total {
+            text-align: right;
+            font-size: 18px;
+            font-weight: bold;
+            margin-top: 20px;
+            color: #111827;
+        }
+
+        button {
+            background-color: #10b981;
+            color: white;
+            border: none;
+            padding: 12px 18px;
+            font-size: 16px;
+            border-radius: 8px;
+            width: 100%;
+            margin-top: 20px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        button:hover {
+            background-color: #059669;
+        }
+
+        .empty {
+            text-align: center;
+            color: #6b7280;
+            font-size: 18px;
+        }
+
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h2>Your Cart</h2>
+
+    {% if cart_items %}
+        <ul>
+            {% for item in cart_items %}
+                <li>
+                    <span>{{ item.name }}</span>
+                    <span>₹{{ item.price }}</span>
+                </li>
+            {% endfor %}
+        </ul>
+
+        <div class="total">Total: ₹{{ total_price }}</div>
+
+        <form method="post">
+            {% csrf_token %}
+            <button type="submit">Confirm Order</button>
+        </form>
+    {% else %}
+        <p class="empty">Your cart is empty!</p>
+    {% endif %}
+</div>
+
+</body>
+</html>
