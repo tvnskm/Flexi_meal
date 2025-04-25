@@ -5,7 +5,7 @@ from .forms import OrderForm
 def home_view(request):
     return render(request, 'home.html')
 
-def start_order_view(request):
+## def start_order_view(request):
     if request.method == 'POST':
         name = request.POST.get('name')
         email = request.POST.get('email')
@@ -20,8 +20,37 @@ def start_order_view(request):
 
         return redirect('select_meals')
 
-    return render(request, 'start_order.html')
+    return render(request, 'start_order.html') 
 
+from .forms import OrderForm
+
+def start_order_view(request):
+    if request.method == 'POST':
+        form = OrderForm(request.POST)
+        if form.is_valid():
+            name = form.cleaned_data['name']
+            email = form.cleaned_data['email']
+            phone = form.cleaned_data['phone']
+            address = form.cleaned_data['address']
+
+            user = Users.objects.create(
+                name=name,
+                email=email,
+                phone_number=phone,
+                address=address
+            )
+
+            request.session['user_id'] = user.user_id
+            request.session['cart'] = []
+
+            return redirect('select_meals')
+        else:
+            # Re-render form with error messages
+            return render(request, 'start_order.html', {'form': form})
+
+    else:
+        form = OrderForm()
+    return render(request, 'start_order.html', {'form': form})
 
 # Select Meals View
 def select_meals_view(request):
@@ -202,15 +231,28 @@ def payment_view(request, order_id):
 
     if request.method == 'POST':
         method = request.POST.get('payment_method')
-        card_number = request.POST.get('card_number') if method == 'card' else None
-        upi_id = request.POST.get('upi_id') if method == 'upi' else None
+        card_number = request.POST.get('card_number', '').strip()
+        upi_id = request.POST.get('upi_id', '').strip()
 
-        # Save payment info
+        # Basic validation based on method
+        if method == 'card' and (not card_number or len(card_number) != 16 or not card_number.isdigit()):
+            return render(request, 'payment.html', {
+                'order': order,
+                'error': 'Please enter a valid 16-digit card number.'
+            })
+
+        if method == 'upi' and ('@' not in upi_id or len(upi_id) < 5):
+            return render(request, 'payment.html', {
+                'order': order,
+                'error': 'Please enter a valid UPI ID.'
+            })
+
+        # Save payment
         Payments.objects.create(
             order=order,
             method=method,
-            card_number=card_number,
-            upi_id=upi_id
+            card_number=card_number if method == 'card' else None,
+            upi_id=upi_id if method == 'upi' else None
         )
 
         # Update order status
@@ -220,3 +262,4 @@ def payment_view(request, order_id):
         return redirect('order_success', order_id=order.order_id)
 
     return render(request, 'payment.html', {'order': order})
+

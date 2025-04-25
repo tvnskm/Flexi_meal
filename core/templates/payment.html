@@ -95,7 +95,9 @@
 
             <div id="upi_info" class="hidden">
                 <label>UPI ID:</label>
-                <input type="text" name="upi_id" placeholder="example@upi">
+                <input type="text" name="upi_id" placeholder="example@upi"
+                       pattern="^[\w.\-]{2,}@[a-zA-Z]{2,}$"
+                       title="Enter a valid UPI ID (e.g., username@bank)">
             </div>
 
             <button type="submit">Pay & Place Order</button>
@@ -124,4 +126,3 @@
     </script>
 </body>
 </html>
-
