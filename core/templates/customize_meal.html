@@ -6,53 +6,83 @@
     <title>Customize Meal</title>
     <style>
         body {
-            font-family: Arial, sans-serif;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background-color: #f4f7fa;
-            padding-top: 50px;
-            text-align: center;
+            margin: 0;
+            padding: 0;
         }
         .container {
             background-color: white;
-            padding: 30px;
-            border-radius: 8px;
-            box-shadow: 0px 10px 20px rgba(0, 0, 0, 0.1);
-            max-width: 800px;
-            margin: 0 auto;
+            padding: 40px;
+            border-radius: 12px;
+            box-shadow: 0px 10px 25px rgba(0, 0, 0, 0.1);
+            max-width: 1000px;
+            margin: 30px auto;
+            text-align: center;
         }
         h2 {
             color: #007bff;
+            font-size: 28px;
+            margin-bottom: 20px;
         }
         .ingredients-list {
-            margin-top: 20px;
+            margin-top: 30px;
             text-align: left;
         }
         .ingredient {
-            margin: 15px 0;
+            margin: 25px 0;
             display: flex;
             justify-content: space-between;
             align-items: center;
+            font-size: 18px;
         }
         .ingredient-name {
-            font-weight: bold;
+            font-weight: 600;
+            color: #333;
         }
         .ingredient-price {
-            color: green;
+            color: #4caf50;
+            font-weight: bold;
         }
         .ingredient-quantity {
-            width: 50px;
-            padding: 5px;
-            font-size: 14px;
-            text-align: center;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .ingredient-quantity button {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            padding: 10px;
+            font-size: 18px;
+            border-radius: 50%;
+            cursor: pointer;
+            margin: 0 10px;
+            transition: background-color 0.3s ease;
+        }
+        .ingredient-quantity button:hover {
+            background-color: #0056b3;
+        }
+        .ingredient-quantity span {
+            font-size: 20px;
+            font-weight: 600;
+            color: #333;
+        }
+        .ingredient-container {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
         }
         .button {
             background-color: #007bff;
             color: white;
             border: none;
-            padding: 10px 20px;
-            font-size: 16px;
-            border-radius: 5px;
+            padding: 15px 25px;
+            font-size: 18px;
+            border-radius: 8px;
             cursor: pointer;
-            margin-top: 20px;
+            margin-top: 30px;
+            transition: background-color 0.3s ease;
         }
         .button:hover {
             background-color: #0056b3;
@@ -66,13 +96,20 @@
         <form method="POST">
             {% csrf_token %}
             <input type="hidden" name="meal_id" value="{{ meal.meal_id }}">
-            
+
             <div class="ingredients-list">
                 {% for ingredient in ingredients %}
                     <div class="ingredient">
-                        <span class="ingredient-name">{{ ingredient.name }}</span>
-                        <span class="ingredient-price">₹{{ ingredient.price|floatformat:2 }}</span>
-                        <input type="number" name="ingredient_{{ ingredient.ingredient_id }}" value="0" class="ingredient-quantity" min="0">
+                        <div class="ingredient-container">
+                            <span class="ingredient-name">{{ ingredient.name }}</span>
+                            <span class="ingredient-price">₹{{ ingredient.price|floatformat:2 }}</span>
+                        </div>
+                        
+                        <div class="ingredient-quantity">
+                            <button type="button" class="decrease" data-id="{{ ingredient.ingredient_id }}">-</button>
+                            <span id="ingredient_{{ ingredient.ingredient_id }}_quantity">0</span>
+                            <button type="button" class="increase" data-id="{{ ingredient.ingredient_id }}">+</button>
+                        </div>
                     </div>
                 {% endfor %}
             </div>
@@ -80,6 +117,38 @@
             <button type="submit" class="button">Add to Cart</button>
         </form>
     </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const decreaseButtons = document.querySelectorAll('.decrease');
+            const increaseButtons = document.querySelectorAll('.increase');
+
+            // Decrease button logic
+            decreaseButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    const ingredientId = button.getAttribute('data-id');
+                    const quantityElement = document.getElementById(`ingredient_${ingredientId}_quantity`);
+                    let quantity = parseInt(quantityElement.textContent);
+
+                    if (quantity > 0) {
+                        quantity -= 1;
+                        quantityElement.textContent = quantity;
+                    }
+                });
+            });
+
+            // Increase button logic
+            increaseButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    const ingredientId = button.getAttribute('data-id');
+                    const quantityElement = document.getElementById(`ingredient_${ingredientId}_quantity`);
+                    let quantity = parseInt(quantityElement.textContent);
+                    quantity += 1;
+                    quantityElement.textContent = quantity;
+                });
+            });
+        });
+    </script>
 
 </body>
 </html>

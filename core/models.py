@@ -84,3 +84,21 @@ class Payment(models.Model):
 
     class Meta:
         db_table = 'payment'
+
+from django.db import models
+
+class Payments(models.Model):
+    PAYMENT_METHOD_CHOICES = [
+        ('card', 'Card (Debit/Credit)'),
+        ('upi', 'UPI'),
+        ('cod', 'Cash on Delivery'),
+    ]
+
+    order = models.ForeignKey('Orders', on_delete=models.CASCADE)
+    method = models.CharField(max_length=10, choices=PAYMENT_METHOD_CHOICES)
+    upi_id = models.CharField(max_length=50, blank=True, null=True)
+    card_number = models.CharField(max_length=16, blank=True, null=True)
+    payment_time = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"Payment for Order {self.order.order_id}"

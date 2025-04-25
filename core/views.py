@@ -1,6 +1,6 @@
 from django.shortcuts import render, redirect
 from .models import Meals, Ingredients, Users, Orders, OrderMeals
-
+from .forms import OrderForm
 # Home View
 def home_view(request):
     return render(request, 'home.html')
@@ -12,7 +12,7 @@ def start_order_view(request):
         phone = request.POST.get('phone')  # From form input
         address = request.POST.get('address')
 
-        # ✅ Use correct model field name: phone_number
+      
         user = Users.objects.create(name=name, email=email, phone_number=phone, address=address)
 
         request.session['user_id'] = user.user_id  # Use `user_id` field
@@ -49,43 +49,37 @@ def customize_meal_view(request, meal_id):
     ingredients = Ingredients.objects.all()
 
     if request.method == 'POST':
-        # Retrieve the customized meal and ingredients from the form
         ingredient_quantities = {}
-        for ingredient in ingredients:
-            ingredient_quantity = request.POST.get(f'ingredient_{ingredient.ingredient_id}', 0)
-            if ingredient_quantity:
-                ingredient_quantities[ingredient.ingredient_id] = int(ingredient_quantity)
+        additional_cost = 0
 
-        # Add customized meal to the session cart
+        for ingredient in ingredients:
+            qty_str = request.POST.get(f'ingredient_{ingredient.ingredient_id}', '0')
+            quantity = int(qty_str) if qty_str.isdigit() else 0
+
+            if quantity > 0:
+                ingredient_quantities[ingredient.ingredient_id] = quantity
+                additional_cost += quantity * float(ingredient.price)  # using 'price' field
+
         cart = request.session.get('cart', [])
 
-        # Convert Decimal to float for price calculation
+        customized_price = float(meal.available_price) + additional_cost
+
         customized_meal = {
             'meal_id': meal.meal_id,
             'name': meal.name,
             'ingredients': ingredient_quantities,
-            'quantity': 1,  # Increment by 1 when customized
-            'price': float(meal.available_price)  # Convert to float to avoid JSON serialization issue
+            'quantity': 1,
+            'price': round(customized_price, 2)
         }
 
-        # Check if meal is already in the cart
-        meal_found = False
-        for item in cart:
-            if item['meal_id'] == meal.meal_id:
-                item['quantity'] += 1  # Increment the quantity if the meal is already in the cart
-                meal_found = True
-                break
-
-        if not meal_found:
-            cart.append(customized_meal)
-
-        # Save the updated cart back to the session
+        cart.append(customized_meal)
         request.session['cart'] = cart
 
-        # Redirect back to the meal selection page
-        return redirect('select_meal')  # Assuming 'select_meal' is your URL name for meal selection
+        return redirect('select_meals')  # Update with your actual meal selection URL name
 
     return render(request, 'customize_meal.html', {'meal': meal, 'ingredients': ingredients})
+
+
 
 
 def cart_view(request):
@@ -129,7 +123,7 @@ def cart_view(request):
             request.session['cart'] = []
 
             # Redirect to the order success page with the order ID
-            return redirect('order_success', order_id=order.order_id)
+            return redirect('payment', order_id=order.order_id)
 
     return render(request, 'cart.html', {'cart_items': cart_items, 'total_price': total_price})
 
@@ -170,7 +164,8 @@ def confirm_order_view(request):
         request.session['cart'] = []
 
         # Redirect to the order success page with the order ID
-        return redirect('order_success', order_id=order.order_id)
+        return redirect('payment', order_id=order.order_id)
+
 
     # If method is not POST, redirect to the cart page
     return redirect('cart')
@@ -199,3 +194,29 @@ def user_orders_view(request, user_id):
     orders = Orders.objects.filter(user_id=user).order_by('-order_date')
     
     return render(request, 'user_orders.html', {'user': user, 'orders': orders})
+
+from .models import Payments
+
+def payment_view(request, order_id):
+    order = Orders.objects.get(order_id=order_id)
+
+    if request.method == 'POST':
+        method = request.POST.get('payment_method')
+        card_number = request.POST.get('card_number') if method == 'card' else None
+        upi_id = request.POST.get('upi_id') if method == 'upi' else None
+
+        # Save payment info
+        Payments.objects.create(
+            order=order,
+            method=method,
+            card_number=card_number,
+            upi_id=upi_id
+        )
+
+        # Update order status
+        order.status = 'Confirmed'
+        order.save()
+
+        return redirect('order_success', order_id=order.order_id)
+
+    return render(request, 'payment.html', {'order': order})

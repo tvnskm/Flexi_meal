@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Payment Page</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background-color: #f4f6f9;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        .payment-container {
+            background-color: #ffffff;
+            padding: 30px 40px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            max-width: 400px;
+            width: 100%;
+        }
+
+        h2 {
+            text-align: center;
+            margin-bottom: 25px;
+            color: #333;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 12px;
+            font-size: 15px;
+            color: #555;
+        }
+
+        input[type="radio"] {
+            margin-right: 10px;
+        }
+
+        input[type="text"] {
+            width: 100%;
+            padding: 10px;
+            margin-top: 6px;
+            margin-bottom: 20px;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            font-size: 14px;
+            box-sizing: border-box;
+        }
+
+        button {
+            width: 100%;
+            padding: 12px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            font-size: 16px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        button:hover {
+            background-color: #45a049;
+        }
+
+        .hidden {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="payment-container">
+        <h2>Choose Payment Method</h2>
+        <form method="POST">
+            {% csrf_token %}
+            <label>
+                <input type="radio" name="payment_method" value="card" required> Debit/Credit Card
+            </label>
+            <label>
+                <input type="radio" name="payment_method" value="upi"> UPI
+            </label>
+            <label>
+                <input type="radio" name="payment_method" value="cod"> Cash on Delivery
+            </label>
+
+            <div id="card_info" class="hidden">
+                <label>Card Number:</label>
+                <input type="text" name="card_number" maxlength="16" placeholder="1234 5678 9012 3456">
+            </div>
+
+            <div id="upi_info" class="hidden">
+                <label>UPI ID:</label>
+                <input type="text" name="upi_id" placeholder="example@upi">
+            </div>
+
+            <button type="submit">Pay & Place Order</button>
+        </form>
+    </div>
+
+    <script>
+        const radios = document.querySelectorAll('input[name="payment_method"]');
+        const cardInfo = document.getElementById('card_info');
+        const upiInfo = document.getElementById('upi_info');
+
+        radios.forEach(radio => {
+            radio.addEventListener('change', () => {
+                if (radio.value === 'card') {
+                    cardInfo.classList.remove('hidden');
+                    upiInfo.classList.add('hidden');
+                } else if (radio.value === 'upi') {
+                    upiInfo.classList.remove('hidden');
+                    cardInfo.classList.add('hidden');
+                } else {
+                    cardInfo.classList.add('hidden');
+                    upiInfo.classList.add('hidden');
+                }
+            });
+        });
+    </script>
+</body>
+</html>
+
